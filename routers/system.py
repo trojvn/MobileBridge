@@ -44,4 +44,6 @@ async def subprocess_popen(cmd: str, cwd: str = "."):
 async def subprocess_pclose(cmd: str):
     for process in find_processes(cmd):
         process.instance.terminate()
+        process.instance.kill()
+        PopenStore.processes.remove(process)
     return {"result": True}

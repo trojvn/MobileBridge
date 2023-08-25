@@ -5,7 +5,7 @@ from subprocess import Popen
 @dataclass
 class Process:
     cmd: str
-    instance: Popen
+    instance: Popen[bytes]
 
 
 class PopenStore:
