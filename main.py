@@ -1,9 +1,12 @@
+import colorama
+
 # noinspection PyPackageRequirements
 import uvicorn
 from fastapi import FastAPI
 
 from routers import systemrouter
 
+colorama.init()
 app = FastAPI(title="MobileBridge")
 
 app.include_router(systemrouter)
