@@ -52,10 +52,3 @@ async def subprocess_pstop(cmd: str):
     for process in find_processes(cmd):
         process.instance.terminate()
     return {"result": True}
-
-
-@router.get("/subprocess/pinfo")
-async def subprocess_pstop(cmd: str):
-    stdouts = [process.instance.stdout for process in find_processes(cmd)]
-    stderrs = [process.instance.stderr for process in find_processes(cmd)]
-    return {"result": True, "stdouts": stdouts, "stderrs": stderrs}
