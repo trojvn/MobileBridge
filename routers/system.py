@@ -17,6 +17,11 @@ class Process:
 processes: list[Process] = []
 
 
+def find_processes(cmd: str) -> list[Process]:
+    """Поиск всех совпадений из процессов по отправленной команде из cmd"""
+    return [process for process in processes if process.cmd == cmd]
+
+
 @router.post("/os")
 async def os(cmd: str):
     try:
@@ -40,3 +45,17 @@ async def subprocess_popen(cmd: str):
     process = Process(cmd, result)
     processes.append(process)
     return {"result": True, "stdout": result.stdout, "stderr": result.stderr}
+
+
+@router.post("/subprocess/pstop")
+async def subprocess_pstop(cmd: str):
+    for process in find_processes(cmd):
+        process.instance.terminate()
+    return {"result": True}
+
+
+@router.get("/subprocess/pinfo")
+async def subprocess_pstop(cmd: str):
+    stdouts = [process.instance.stdout for process in find_processes(cmd)]
+    stderrs = [process.instance.stderr for process in find_processes(cmd)]
+    return {"result": True, "stdouts": stdouts, "stderrs": stderrs}
