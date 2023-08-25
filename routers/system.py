@@ -47,8 +47,8 @@ async def subprocess_popen(cmd: str):
     return {"result": True, "stdout": result.stdout, "stderr": result.stderr}
 
 
-@router.post("/subprocess/pstop")
-async def subprocess_pstop(cmd: str):
+@router.post("/subprocess/pclose")
+async def subprocess_pclose(cmd: str):
     for process in find_processes(cmd):
         process.instance.terminate()
     return {"result": True}
