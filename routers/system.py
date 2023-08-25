@@ -19,9 +19,9 @@ async def os(cmd: str):
 
 
 @router.post("/subprocess/run")
-async def subprocess_run(cmd: str):
+async def subprocess_run(cmd: str, cwd: str = "."):
     try:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=PIPE)
+        result = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=PIPE)
         stdout = result.stdout.decode("utf-8")
         stderr = result.stderr.decode("utf-8")
         return {"result": True, "stdout": stdout, "stderr": stderr}
@@ -30,9 +30,9 @@ async def subprocess_run(cmd: str):
 
 
 @router.post("/subprocess/popen")
-async def subprocess_popen(cmd: str):
+async def subprocess_popen(cmd: str, cwd: str = "."):
     try:
-        result = Popen(cmd, stdout=subprocess.PIPE, stderr=PIPE)
+        result = Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=PIPE)
         process = Process(cmd, result)
         PopenStore.processes.append(process)
         return {"result": True}
