@@ -1,25 +1,12 @@
 import os
 import subprocess
-from dataclasses import dataclass
 from subprocess import PIPE, Popen
 
 from fastapi import APIRouter, HTTPException
 
+from processes import Process, PopenStore, find_processes
+
 router = APIRouter(prefix="/system", tags=["system"])
-
-
-@dataclass
-class Process:
-    cmd: str
-    instance: Popen
-
-
-processes: list[Process] = []
-
-
-def find_processes(cmd: str) -> list[Process]:
-    """Поиск всех совпадений из процессов по отправленной команде из cmd"""
-    return [process for process in processes if process.cmd == cmd]
 
 
 @router.post("/os")
@@ -33,18 +20,24 @@ async def os(cmd: str):
 
 @router.post("/subprocess/run")
 async def subprocess_run(cmd: str):
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=PIPE)
-    stdout = result.stdout.decode("utf-8")
-    stderr = result.stderr.decode("utf-8")
-    return {"result": True, "stdout": stdout, "stderr": stderr}
+    try:
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=PIPE)
+        stdout = result.stdout.decode("utf-8")
+        stderr = result.stderr.decode("utf-8")
+        return {"result": True, "stdout": stdout, "stderr": stderr}
+    except Exception as e:
+        raise HTTPException(500, detail={"msg": str(e), "msg_type": str(type(e))})
 
 
 @router.post("/subprocess/popen")
 async def subprocess_popen(cmd: str):
-    result = Popen(cmd, stdout=subprocess.PIPE, stderr=PIPE)
-    process = Process(cmd, result)
-    processes.append(process)
-    return {"result": True, "stdout": result.stdout, "stderr": result.stderr}
+    try:
+        result = Popen(cmd, stdout=subprocess.PIPE, stderr=PIPE)
+        process = Process(cmd, result)
+        PopenStore.processes.append(process)
+        return {"result": True}
+    except Exception as e:
+        raise HTTPException(500, detail={"msg": str(e), "msg_type": str(type(e))})
 
 
 @router.post("/subprocess/pclose")
