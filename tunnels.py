@@ -1,11 +1,12 @@
 import contextlib
 import json
+import os
 from pathlib import Path
 from subprocess import PIPE, Popen
 from typing import Optional, NamedTuple
 
 kitty_path = "kitty"
-kitty_exe = "kitty.exe"
+kitty_exe = "_kitty.exe"
 
 tunnel = Path("tunnel.json")
 args = '-auto-store-sshkey -load "Default Settings"'
@@ -48,6 +49,7 @@ class Kitty:
             self.__kitty = None
 
     def __enter__(self):
+        os.system("taskkill /f /im _kitty.exe")
         self.kitty_start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
