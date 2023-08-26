@@ -47,8 +47,8 @@ class Kitty:
             self.__kitty.kill()
             self.__kitty = None
 
-    def __aenter__(self):
+    def __enter__(self):
         self.kitty_start()
 
-    def __aexit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.kitty_stop()
