@@ -21,7 +21,7 @@ async def os(cmd: str):
 @router.post("/subprocess/run")
 async def subprocess_run(cmd: str, cwd: str = "."):
     try:
-        result = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=PIPE)
+        result = subprocess.run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
         stdout = result.stdout.decode("utf-8")
         stderr = result.stderr.decode("utf-8")
         return {"result": True, "stdout": stdout, "stderr": stderr}
@@ -32,14 +32,10 @@ async def subprocess_run(cmd: str, cwd: str = "."):
 @router.post("/subprocess/popen")
 async def subprocess_popen(cmd: str, cwd: str = "."):
     try:
-        result = Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=PIPE)
+        result = Popen(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
         process = Process(cmd, result)
         PopenStore.processes.append(process)
-        return {
-            "result": True,
-            "stdout": result.stdout.read(),
-            "stderr": result.stderr.read(),
-        }
+        return {"result": True}
     except Exception as e:
         raise HTTPException(500, detail={"msg": str(e), "msg_type": str(type(e))})
 
