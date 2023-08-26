@@ -35,7 +35,11 @@ async def subprocess_popen(cmd: str, cwd: str = "."):
         result = Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=PIPE)
         process = Process(cmd, result)
         PopenStore.processes.append(process)
-        return {"result": True}
+        return {
+            "result": True,
+            "stdout": result.stdout.read(),
+            "stderr": result.stderr.read(),
+        }
     except Exception as e:
         raise HTTPException(500, detail={"msg": str(e), "msg_type": str(type(e))})
 
