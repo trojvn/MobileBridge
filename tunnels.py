@@ -1,6 +1,6 @@
 import contextlib
 import json
-import os
+import subprocess
 from pathlib import Path
 from subprocess import PIPE, Popen
 from typing import Optional, NamedTuple
@@ -49,7 +49,8 @@ class Kitty:
             self.__kitty = None
 
     def __enter__(self):
-        os.system("taskkill /f /im _kitty.exe")
+        cmd = f"taskkill /f /im {kitty_exe}"
+        subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
         self.kitty_start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
