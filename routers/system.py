@@ -47,3 +47,8 @@ async def subprocess_pclose(cmd: str):
         process.instance.kill()
         PopenStore.processes.remove(process)
     return {"result": True}
+
+
+@router.get("/subprocess/get_processes")
+async def get_subprocesses() -> list[str]:
+    return [proc.cmd for proc in PopenStore.processes]
