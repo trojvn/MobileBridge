@@ -5,8 +5,8 @@ from pathlib import Path
 from subprocess import PIPE, Popen
 from typing import Optional, NamedTuple
 
-kitty_path = "kitty"
-kitty_exe = "_kitty.exe"
+kitty_path = "m_kitty"
+kitty_exe = "m_kitty.exe"
 
 tunnel = Path("tunnel.json")
 args = '-auto-store-sshkey -load "Default Settings"'
