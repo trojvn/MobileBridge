@@ -12,7 +12,7 @@ from processes import Process, PopenStore, find_processes
 router = APIRouter(prefix="/system", tags=["system"])
 
 
-@router.post("/os/system")
+@router.post("/os")
 async def os_system(cmd: str):
     try:
         result_code = os.system(cmd)
