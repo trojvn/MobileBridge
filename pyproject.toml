@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mobilebridge"
+name = "MobileBridge"
 version = "0.1.0"
 description = ""
 authors = ["trojvn <mrx.trojan@gmail.com>"]
