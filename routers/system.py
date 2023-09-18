@@ -63,6 +63,8 @@ async def get_subprocesses() -> list[str]:
 @router.post("/path/mkdir")
 async def path_mkdir(path: str):
     p = Path(path)
+    p.parent.parent.mkdir(exist_ok=True)
+    p.parent.mkdir(exist_ok=True)
     p.mkdir(exist_ok=True)
     return {"result": True}
 
