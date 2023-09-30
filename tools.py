@@ -1,15 +1,13 @@
 import contextlib
 import json
+import shutil
 import subprocess
 from pathlib import Path
 from subprocess import PIPE, Popen
 from typing import Optional, NamedTuple
 
-kitty_path = "t_kitty"
-kitty_exe = "t_kitty.exe"
-
-tunnel = Path("tunnel.json")
-args = '-auto-store-sshkey -load "Default Settings"'
+TUNNEL = Path("tunnel.json")
+ARGS = '-auto-store-sshkey -load "Default Settings"'
 
 
 class TunnelData(NamedTuple):
@@ -18,15 +16,25 @@ class TunnelData(NamedTuple):
 
 
 def load_tunnel_data() -> Optional[TunnelData]:
-    with tunnel.open("r", encoding="utf-8") as f:
+    with TUNNEL.open("r", encoding="utf-8") as f:
         json_data = json.load(f)
     with contextlib.suppress(Exception):
         return TunnelData(json_data["pw"], int(json_data["port"]))
-    raise ValueError(f"Не удалось загрузить {tunnel.name}")
+    raise ValueError(f"Не удалось загрузить {TUNNEL.name}")
+
+
+def create_tunnel_port(port: int) -> Path:
+    m_tunnel = Path(f"./m_kitty/{port}/")
+    kitty_exe = m_tunnel / "m_kitty.exe"
+    if m_tunnel.is_dir():
+        shutil.rmtree(m_tunnel, ignore_errors=True)
+    shutil.copytree("m_kitty/default/", m_tunnel)
+    return kitty_exe
 
 
 class Kitty:
-    def __init__(self, password: str, port: int):
+    def __init__(self, kitty_fpath: Path, password: str, port: int):
+        self.__kitty_fpath = kitty_fpath
         self.__kitty: Optional[Popen[bytes]] = None
         self.__password = password
         self.__port = port
@@ -34,10 +42,10 @@ class Kitty:
     def kitty_start(self):
         pw = self.__password
         port = self.__port
-        cmd = f"{kitty_path}/{kitty_exe} -pw {pw} -P {port} {args}"
+        cmd = f"{self.__kitty_fpath} -pw {pw} -P {port} {ARGS}"
         self.__kitty = Popen(
             cmd,
-            cwd=kitty_path,
+            cwd=self.__kitty_fpath.parent,
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -49,7 +57,7 @@ class Kitty:
             self.__kitty = None
 
     def __enter__(self):
-        cmd = f"taskkill /f /im {kitty_exe}"
+        cmd = f"taskkill /f /im {self.__kitty_fpath.name}"
         subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
         self.kitty_start()
 
