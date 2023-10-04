@@ -26,8 +26,8 @@ async def os_system(cmd: str):
 async def subprocess_run(cmd: str, cwd: str = "."):
     try:
         result = subprocess.run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
-        stdout = result.stdout.decode("utf-8")
-        stderr = result.stderr.decode("utf-8")
+        stdout = result.stdout.decode("cp-1251")
+        stderr = result.stderr.decode("cp-1251")
         return {"result": True, "stdout": stdout, "stderr": stderr}
     except Exception as e:
         print(e)
