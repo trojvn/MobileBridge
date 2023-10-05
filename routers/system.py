@@ -5,9 +5,13 @@ import subprocess
 from pathlib import Path
 from subprocess import PIPE, Popen
 
+from dotenv import load_dotenv
 from fastapi import APIRouter
 
 from processes import Process, PopenStore, find_processes
+
+load_dotenv()
+DEBUG = os.getenv("DEBUG", False)
 
 router = APIRouter(prefix="/system", tags=["system"])
 
@@ -26,8 +30,8 @@ async def os_system(cmd: str):
 async def subprocess_run(cmd: str, cwd: str = "."):
     try:
         result = subprocess.run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
-        stdout = result.stdout.decode("cp-1251")
-        stderr = result.stderr.decode("cp-1251")
+        stdout = result.stdout.decode("windows-1251")
+        stderr = result.stderr.decode("windows-1251")
         return {"result": True, "stdout": stdout, "stderr": stderr}
     except Exception as e:
         print(e)
@@ -37,7 +41,11 @@ async def subprocess_run(cmd: str, cwd: str = "."):
 @router.post("/subprocess/popen")
 async def subprocess_popen(cmd: str, cwd: str = "."):
     try:
-        result = Popen(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
+        with open(os.devnull, "w") as null:
+            if DEBUG:
+                result = Popen(cmd, cwd=cwd)
+            else:
+                result = Popen(cmd, cwd=cwd, stdout=null, stderr=null)
         process = Process(cmd, result)
         PopenStore.processes.append(process)
         return {"result": True}
