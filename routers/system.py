@@ -63,7 +63,7 @@ async def subprocess_pclose(cmd: str):
     return {"result": True}
 
 
-@router.get("/subprocess/get_processes")
+@router.get("/subprocess/processes/get")
 async def get_subprocesses() -> list[str]:
     return [proc.cmd for proc in PopenStore.processes]
 
