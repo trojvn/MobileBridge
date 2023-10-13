@@ -1,9 +1,10 @@
 import contextlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
-from subprocess import PIPE, Popen
+from subprocess import Popen
 from typing import Optional, NamedTuple
 
 TUNNEL = Path("tunnel.json")
@@ -32,6 +33,12 @@ def create_tunnel_port(port: int) -> Path:
     return kitty_exe
 
 
+def close_process(process_name: str):
+    cmd = f"taskkill /f /im {process_name}"
+    with open(os.devnull, "w") as null:
+        subprocess.run(cmd, stdout=null, stderr=null)
+
+
 class Kitty:
     def __init__(self, kitty_fpath: Path, password: str, port: int):
         self.__kitty_fpath = kitty_fpath
@@ -43,12 +50,13 @@ class Kitty:
         pw = self.__password
         port = self.__port
         cmd = f"{self.__kitty_fpath} -pw {pw} -P {port} {ARGS}"
-        self.__kitty = Popen(
-            cmd,
-            cwd=self.__kitty_fpath.parent,
-            stdout=PIPE,
-            stderr=PIPE,
-        )
+        with open(os.devnull, "w") as null:
+            self.__kitty = Popen(
+                cmd,
+                cwd=self.__kitty_fpath.parent,
+                stdout=null,
+                stderr=null,
+            )
 
     def kitty_stop(self):
         if self.__kitty:
@@ -57,8 +65,6 @@ class Kitty:
             self.__kitty = None
 
     def __enter__(self):
-        cmd = f"taskkill /f /im {self.__kitty_fpath.name}"
-        subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
         self.kitty_start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
