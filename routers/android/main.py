@@ -13,9 +13,7 @@ GetActions = Literal["packagename", "checkapk"]
 def android(action: GetActions, apk_path: str):
     if action == "packagename":
         if packagename := get_package_name_by_apk(apk_path):
-            return {"result": True, "packagename": packagename}
-        return {"result": False}
+            return packagename
     elif action == "checkapk":
-        apkstatus = check_apk(apk_path)
-        return {"result": True, "apkstatus": apkstatus}
+        return check_apk(apk_path)
     return {"result": False}
