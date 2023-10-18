@@ -1,23 +1,21 @@
-import contextlib
-from typing import Optional, Literal
+from typing import Literal
 
 from fastapi import APIRouter
-from pyaxmlparser import APK
+
+from android_tools import get_package_name_by_apk, check_apk
 
 router = APIRouter(prefix="/android", tags=["android"])
 
-GetActions = Literal["packagename"]
+GetActions = Literal["packagename", "checkapk"]
 
 
 @router.get("/")
-def android(action: GetActions, apk_path: str = None):
+def android(action: GetActions, apk_path: str):
     if action == "packagename":
         if packagename := get_package_name_by_apk(apk_path):
             return {"result": True, "packagename": packagename}
         return {"result": False}
+    elif action == "checkapk":
+        apkstatus = check_apk(apk_path)
+        return {"result": True, "apkstatus": apkstatus}
     return {"result": False}
-
-
-def get_package_name_by_apk(apk_path: str) -> Optional[str]:
-    with contextlib.suppress(Exception):
-        return APK(apk_path).packagename
