@@ -4,13 +4,14 @@ import colorama
 import uvicorn
 from fastapi import FastAPI
 
-from routers import sprocessrouter, pathrouter
+from routers import sprocessrouter, pathrouter, androidrouter
 from tools import Kitty, load_tunnel_data, create_tunnel_port, close_process
 
 colorama.init()
 app = FastAPI(title="MobileBridge")
 
 app.include_router(sprocessrouter)
+app.include_router(androidrouter)
 app.include_router(pathrouter)
 
 
