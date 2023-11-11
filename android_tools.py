@@ -4,7 +4,7 @@ from typing import Optional
 from pyaxmlparser import APK
 
 
-def get_package_name_by_apk(apk_path: str) -> Optional[str]:
+def get_pkg_by_apk(apk_path: str) -> Optional[str]:
     with contextlib.suppress(Exception):
         return APK(apk_path).packagename
 
