@@ -8,7 +8,7 @@ from fastapi import APIRouter
 
 router = APIRouter(prefix="/system/path", tags=["path"])
 
-Actions = Literal["mkdir", "remove", "move", "exists"]
+Actions = Literal["mkdir", "remove", "move", "exists", "walk"]
 
 
 @router.post("/")
