@@ -37,7 +37,7 @@ async def system_subprocess(action: str, cmd: str, cwd: str = "."):
                 if DEBUG:
                     result = Popen(cmd, cwd=cwd)
                 else:
-                    result = Popen(cmd, cwd=cwd, stdout=null, stderr=null)
+                    result = Popen(cmd, cwd=cwd, stdout=null, stdin=null, stderr=null)
             process = Process(cmd, result)
             PopenStore.processes.append(process)
             return {"result": True}
