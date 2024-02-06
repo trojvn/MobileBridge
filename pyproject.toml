@@ -11,12 +11,13 @@ fastapi = "^0.103.1"
 uvicorn = "^0.23.2"
 colorama = "^0.4.6"
 python-dotenv = "^1.0.0"
-pyaxmlparser = "^0.3.28"
 
-[tool.pyright]
-venvPath = "."
-venv = ".venv"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

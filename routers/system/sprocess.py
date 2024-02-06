@@ -17,12 +17,12 @@ Actions = Literal["run", "popen", "pclose"]
 
 
 @router.get("/")
-async def get_subprocesses():
+def get_subprocesses():
     return [proc.cmd for proc in PopenStore.processes]
 
 
 @router.post("/")
-async def system_subprocess(action: str, cmd: str, cwd: str = "."):
+def system_subprocess(action: str, cmd: str, cwd: str = "."):
     if action == "run":
         try:
             result = subprocess.run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
