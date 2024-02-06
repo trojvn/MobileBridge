@@ -46,6 +46,6 @@ def system_path(action: Actions, path: str, dst_path: Optional[str] = None):
             a = files + dirs
             return {"result": True, "files": files, "dirs": dirs, "all": a}
         except FileNotFoundError:
-            return {"result": False}
+            return {"result": False, "files": [], "dirs": [], "all": []}
 
     return {"result": False}
