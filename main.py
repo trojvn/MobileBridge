@@ -1,11 +1,10 @@
-import time
-
 import colorama
 import uvicorn
 from fastapi import FastAPI
+from tunneller import Kitty, PrepareKitty
+from tunneller.credentials import get_credentials
 
 from routers import sprocessrouter, pathrouter
-from tools import Kitty, load_tunnel_data, create_tunnel_port, close_process
 
 colorama.init()
 app = FastAPI(title="MobileBridge")
@@ -15,13 +14,14 @@ app.include_router(pathrouter)
 
 
 def main():
-    port = 8020
-    data = load_tunnel_data()
-    close_process("m_kitty.exe")
-    time.sleep(1)
-    kitty_fpath = create_tunnel_port(port)
-    with Kitty(kitty_fpath, data.password, data.port):
-        uvicorn.run(app, host="0.0.0.0", port=port)
+    try:
+        data = get_credentials("./tunnel.json")
+        PrepareKitty("m_kitty", [i for i in range(4700, 4799)], [])
+        with Kitty("./m_kitty/m_kitty.exe", data.port, data.pswd):
+            uvicorn.run(app, host="0.0.0.0", port=8020)
+    except Exception as e:
+        print(e)
+    input()
 
 
 if __name__ == "__main__":
