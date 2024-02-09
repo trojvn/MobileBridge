@@ -1,4 +1,4 @@
 fastapi[all]
 colorama
 python-dotenv
-https://gitlab.yuharan.ru/mrx/tunneller.git
+git+https://gitlab.yuharan.ru/mrx/tunneller.git
