@@ -16,7 +16,9 @@ app.include_router(pathrouter)
 def main():
     try:
         data = get_credentials("./tunnel.json")
-        PrepareKitty("m_kitty", [i for i in range(4700, 4799)], [])
+        rports = [i for i in range(4700, 4799)]
+        rports.append(8020)
+        PrepareKitty("m_kitty", rports, [])
         with Kitty("./m_kitty/m_kitty.exe", data.port, data.pswd):
             uvicorn.run(app, host="0.0.0.0", port=8020)
     except Exception as e:
