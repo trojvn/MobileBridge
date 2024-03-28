@@ -1,8 +1,5 @@
-import os
-
 import colorama
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from tunneller import Kitty, PrepareKitty
 from tunneller.credentials import get_credentials
@@ -15,16 +12,13 @@ app = FastAPI(title="MobileBridge")
 app.include_router(sprocessrouter)
 app.include_router(pathrouter)
 
-load_dotenv()
-HOST = os.getenv("HOST", "95.217.106.245")
-
 
 def main():
     try:
         data = get_credentials("./tunnel.json")
         rports = [i for i in range(4700, 4799)]
         rports.append(8020)
-        PrepareKitty(HOST, ".", "m_kitty", rports, [])
+        PrepareKitty(data.host, ".", "m_kitty", rports, [])
         with Kitty("./m_kitty/m_kitty.exe", data.port, data.pswd):
             uvicorn.run(app, host="0.0.0.0", port=8020)
     except Exception as e:

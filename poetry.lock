@@ -311,7 +311,7 @@ jsoner = {git = "https://gitlab.yuharan.ru/mrx/jsoner.git"}
 type = "git"
 url = "https://gitlab.yuharan.ru/mrx/tunneller.git"
 reference = "HEAD"
-resolved_reference = "c899a2f466553da0e4d1d7e56f7fb609dfc9487c"
+resolved_reference = "4583ed7d5bdbb5a9c7d78c1b24ce0a141917baea"
 
 [[package]]
 name = "typing-extensions"
