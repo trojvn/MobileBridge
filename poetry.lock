@@ -312,7 +312,7 @@ tooler = {git = "https://gitlab.yuharan.ru/mrx/tooler.git"}
 type = "git"
 url = "https://gitlab.yuharan.ru/mrx/tunneller.git"
 reference = "HEAD"
-resolved_reference = "0c94089b6aa8badce5cffff88a8a93bd40a6bcd2"
+resolved_reference = "9f5b876afed2db0633f6148e7e94c28718f67ad0"
 
 [[package]]
 name = "typing-extensions"
