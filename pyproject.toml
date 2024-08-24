@@ -17,8 +17,3 @@ tunneller = {git = "https://github.com/trojvn/tunneller.git"}
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-
-[tool.pyright]
-venvPath = "."
-venv = ".venv"
