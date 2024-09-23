@@ -1,51 +1,50 @@
+import logging
 import os
-import subprocess
-from subprocess import PIPE, Popen
-from typing import Literal
+from subprocess import PIPE, Popen, run
 
-from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from processes import Process, PopenStore, find_processes
-
-load_dotenv()
-DEBUG = os.getenv("DEBUG", False)
+from envs import DEBUG
+from processes import PopenStore, Process, find_processes
 
 router = APIRouter(prefix="/system/subprocess", tags=["subprocess"])
 
-Actions = Literal["run", "popen", "pclose"]
 
-
-@router.get("/")
-def get_subprocesses():
+@router.get("/get-subprocesses/")
+def system_get_subprocesses() -> list[str]:
     return [proc.cmd for proc in PopenStore.processes]
 
 
-@router.post("/")
-def system_subprocess(action: str, cmd: str, cwd: str = "."):
-    if action == "run":
-        try:
-            result = subprocess.run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE)
-            stdout = result.stdout.decode("windows-1251")
-            stderr = result.stderr.decode("windows-1251")
-            return {"result": True, "stdout": stdout, "stderr": stderr}
-        except Exception as e:
-            return {"result": False, "msg": str(e)}
-    elif action == "popen":
-        try:
-            with open(os.devnull, "w") as null:
-                if DEBUG:
-                    result = Popen(cmd, cwd=cwd)
-                else:
-                    result = Popen(cmd, cwd=cwd, stdout=null, stdin=null, stderr=null)
-            process = Process(cmd, result)
-            PopenStore.processes.append(process)
-            return {"result": True}
-        except Exception as e:
-            return {"result": False, "msg": str(e)}
-    elif action == "pclose":
-        for process in find_processes(cmd):
-            process.instance.terminate()
-            process.instance.kill()
-            PopenStore.processes.remove(process)
+@router.get("/run/")
+def system_subprocess_run(cmd: str, cwd: str = ".") -> dict:
+    try:
+        result = run(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE, check=False)
+        stdout = result.stdout.decode("windows-1251")
+        stderr = result.stderr.decode("windows-1251")
+        return {"result": True, "stdout": stdout, "stderr": stderr}
+    except Exception as e:
+        logging.exception(e)
+        return {"result": False}
+
+
+@router.get("/popen/")
+def system_subprocess_popen(cmd: str, cwd: str = ".") -> dict:
+    try:
+        with open(os.devnull, "w", encoding="utf-8") as null:
+            std = None if DEBUG else null
+            result = Popen(cmd, cwd=cwd, stdout=std, stdin=std, stderr=std)
+        process = Process(cmd, result)
+        PopenStore.processes.append(process)
         return {"result": True}
+    except Exception as e:
+        logging.exception(e)
+        return {"result": False}
+
+
+@router.get("/pclose/")
+def system_subprocess_pclose(cmd: str) -> dict:
+    for process in find_processes(cmd):
+        process.instance.terminate()
+        process.instance.kill()
+        PopenStore.processes.remove(process)
+    return {"result": True}
