@@ -1,11 +1,11 @@
 import colorama
-from tunneller.kitty.tools import LPort
 import uvicorn
 from fastapi import FastAPI
 from tunneller import Kitty, PrepareKitty
 from tunneller.credentials import get_credentials
+from tunneller.kitty.tools import LPort
 
-from routers import sprocessrouter, pathrouter
+from routers import pathrouter, sprocessrouter
 
 colorama.init()
 app = FastAPI(title="MobileBridge")
@@ -17,7 +17,7 @@ app.include_router(pathrouter)
 def main():
     try:
         data = get_credentials("./tunnel.json")
-        rports = [i for i in range(4700, 4799)]
+        rports = list(range(4700, 4799))
         rports.append(8020)
         lports = [LPort("mobilebot", 80, 8021)]
         PrepareKitty(data.host, ".", "m_kitty", rports, lports)
